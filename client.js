@@ -67,7 +67,7 @@ function start() {
     };
 
     // WebSocket соединение
-    const ws = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws');
+    const ws = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + 'fitness.onrender.com' + '/ws');
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
         if (data.repetitions_count !== undefined) {
