@@ -21,33 +21,7 @@
             max-width: 1280px;
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let socket = new WebSocket("ws://localhost:8000/ws");
 
-            socket.onopen = function (e) {
-                console.log("[open] Connection established");
-                console.log("Sending to server");
-            };
-
-            socket.onmessage = function (event) {
-                console.log('[message]Data received from server: ${event.data}');
-                // Добавьте логику для отображения полученного сообщения на странице
-                alert('Data received from server: ${event.data}');
-            };
-
-            socket.onclose = function (event) {
-                if (event.wasClean) {
-                    console.log('[close] Connection closed cleanly, code =${event.code} reason =${event.reason}');
-                } else {
-                    // например, сервер процесс убит или сеть недоступна
-                    // обычно в этом случае event.code 1006
-                    console.log('[close] Connection died');
-                }
-            };
-
-        });
-    </script>
 </head>
 <body>
 
@@ -59,13 +33,13 @@
 <button id="stop" style="display: none" onclick="stop()">Stop</button>
 
 <div id="media">
-    <h1>Repetitions Count: <span id="repetitionsCount">0</span></h1>
     <h2>Media</h2>
 
     <audio id="audio" autoplay="true"></audio>
     <video id="video" autoplay="true" playsinline="true"></video>
     <video id="localVideo" autoplay="true" muted="true" playsinline="true"></video>
 
+    <p>Repetitions count: <span id="repetitions_count">0</span></p>
 </div>
 
 <script src="client.js"></script>
