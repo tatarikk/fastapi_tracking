@@ -19,8 +19,7 @@ function negotiate() {
         });
     }).then(() => {
         var offer = pc.localDescription;
-        console.log(offer);
-
+        console.log('Local offer:', offer); // Добавляем лог для отладки
         return fetch('/offer', {
             body: JSON.stringify({
                 sdp: offer.sdp,
@@ -34,10 +33,13 @@ function negotiate() {
     }).then((response) => {
         return response.json();
     }).then((answer) => {
+        console.log('Answer from server:', answer); // Добавляем лог для отладки
         return pc.setRemoteDescription(answer).then(() => {
             // Обновляем переменную repetitions_count при получении ответа от сервера
+            document.getElementById('repetitions_count').innerText = answer.repetitions_count;
         });
     }).catch((e) => {
+        console.error('Negotiation error:', e); // Добавляем лог для отладки
         alert(e);
     });
 }
@@ -60,6 +62,7 @@ function start() {
     };
 
     pc.onconnectionstatechange = (event) => {
+        console.log('Connection state:', pc.connectionState); // Добавляем лог для отладки
         if (pc.connectionState === 'connected') {
             console.log("Connection established.");
         }
@@ -67,8 +70,10 @@ function start() {
 
     // WebSocket соединение
     const ws = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws');
+    console.log('WebSocket connection:', ws.url); // Добавляем лог для отладки
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
+        console.log('Data received from server:', data); // Добавляем лог для отладки
         if (data.repetitions_count !== undefined) {
             // Обновляем переменную repetitions_count при получении сообщения от сервера
             document.getElementById('repetitions_count').innerText = data.repetitions_count;
