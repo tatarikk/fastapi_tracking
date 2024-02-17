@@ -71,7 +71,7 @@ function start() {
     // WebSocket соединение
     const ws = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws');
     console.log('WebSocket connection:', ws.url); // Добавляем лог для отладки
-    ws.onmessage = function(event) {
+    ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
         console.log('Data received from server:', data); // Добавляем лог для отладки
         if (data.repetitions_count !== undefined) {
@@ -79,7 +79,6 @@ function start() {
             document.getElementById('repetitions_count').innerText = data.repetitions_count;
         }
     };
-
     navigator.mediaDevices.getUserMedia({video: true, audio: true}).then((stream) => {
         document.getElementById('localVideo').srcObject = stream;
 
