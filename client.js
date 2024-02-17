@@ -72,7 +72,6 @@ function start() {
     console.log(window.location.host);
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
-        console.log(data);
         if (data.repetitions_count !== undefined) {
             // Обновляем переменную repetitions_count при получении сообщения от сервера
             document.getElementById('repetitions_count').innerText = data.repetitions_count;
