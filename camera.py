@@ -103,13 +103,9 @@ async def offer(request):
                 processed_image, fps, repetitions_count = process_image(image)
                 print("REPETITIONS COUNT: ", repetitions_count)
 
+                # Отправляем данные о repetitions_count через WebSocket всем клиентам
                 for ws in pcs_ws:
-                    await ws.send_str(json.dumps({"repetitions_count": repetitions_count}))
-
-                #cv2.imshow("Live Video", processed_image)
-
-                #if cv2.waitKey(1) & 0xFF == ord('q'):
-                    #break
+                    await ws.send_json({"repetitions_count": repetitions_count})
 
     pc.on("track")(on_track)
 
