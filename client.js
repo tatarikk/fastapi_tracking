@@ -36,7 +36,6 @@ function negotiate() {
     }).then((answer) => {
         return pc.setRemoteDescription(answer).then(() => {
             // Обновляем переменную repetitions_count при получении ответа от сервера
-            document.getElementById('repetitions_count').innerText = answer.repetitions_count;
         });
     }).catch((e) => {
         alert(e);
