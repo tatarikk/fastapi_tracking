@@ -1,6 +1,7 @@
 let pc; // Переменная для хранения объекта RTCPeerConnection
 
 function negotiate() {
+    console.log('WebRTC Connection state: connecting'); // Добавляем лог для отладки
     return pc.createOffer().then((offer) => {
         return pc.setLocalDescription(offer);
     }).then(() => {
@@ -62,7 +63,7 @@ function start() {
     };
 
     pc.onconnectionstatechange = (event) => {
-        console.log('Connection state:', pc.connectionState); // Добавляем лог для отладки
+        console.log('WebRTC Connection state:', pc.connectionState); // Добавляем лог для отладки
         if (pc.connectionState === 'connected') {
             console.log("Connection established.");
         }
@@ -70,6 +71,7 @@ function start() {
 
     // WebSocket соединение
     const ws = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws');
+    console.log('WebSocket Connection state: connecting'); // Добавляем лог для отладки
     console.log('WebSocket connection:', ws.url); // Добавляем лог для отладки
     ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
