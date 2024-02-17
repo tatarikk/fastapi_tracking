@@ -1,9 +1,11 @@
-let pc; // Переменная для хранения объекта RTCPeerConnection
+
+
 
 function negotiate() {
     return pc.createOffer().then((offer) => {
         return pc.setLocalDescription(offer);
     }).then(() => {
+        // Ожидание завершения сбора ICE кандидатов
         return new Promise((resolve) => {
             if (pc.iceGatheringState === 'complete') {
                 resolve();
@@ -19,8 +21,7 @@ function negotiate() {
         });
     }).then(() => {
         var offer = pc.localDescription;
-        console.log(offer);
-
+        // Отправляем предложение (offer) на сервер
         return fetch('/offer', {
             body: JSON.stringify({
                 sdp: offer.sdp,
@@ -34,9 +35,7 @@ function negotiate() {
     }).then((response) => {
         return response.json();
     }).then((answer) => {
-        return pc.setRemoteDescription(answer).then(() => {
-            // Обновляем переменную repetitions_count при получении ответа от сервера
-        });
+        return pc.setRemoteDescription(answer);
     }).catch((e) => {
         alert(e);
     });
@@ -60,25 +59,16 @@ function start() {
     };
 
     pc.onconnectionstatechange = (event) => {
+        //console.log(Connection, state, change: ${pc.connectionState})
+
         if (pc.connectionState === 'connected') {
             console.log("Connection established.");
         }
     };
 
-    // WebSocket соединение
-    const ws = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws');
-    console.log(window.location.protocol);
-    console.log(window.location.host);
-    ws.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        console.log(data);
-        if (data.repetitions_count !== undefined) {
-            // Обновляем переменную repetitions_count при получении сообщения от сервера
-            document.getElementById('repetitions_count').innerText = data.repetitions_count;
-        }
-    };
-
+    // Запрос доступа к камере и микрофону
     navigator.mediaDevices.getUserMedia({video: true, audio: true}).then((stream) => {
+        // Получаем локальный видеопоток и отображаем его
         document.getElementById('localVideo').srcObject = stream;
 
         stream.getTracks().forEach((track) => {
@@ -87,7 +77,7 @@ function start() {
 
         document.getElementById('start').style.display = 'none';
         document.getElementById('stop').style.display = 'inline-block';
-        negotiate();
+        negotiate(); // Запускаем процесс установки соединения
     }).catch((err) => {
         console.error('Failed to get media: ', err);
         alert('Ошибка: не удалось получить доступ к камере и микрофону!');
