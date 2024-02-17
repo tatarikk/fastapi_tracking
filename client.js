@@ -69,7 +69,7 @@ function start() {
     };
 
     // WebSocket соединение
-    const ws = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host);
+    const ws = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/ws');
     console.log('WebSocket connection:', ws.url); // Добавляем лог для отладки
     ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
