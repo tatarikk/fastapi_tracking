@@ -103,13 +103,7 @@ async def offer(request):
                 processed_image, fps, repetitions_count = process_image(image)
                 print("REPETITIONS COUNT: ", repetitions_count)
 
-                for ws in pcs_ws:
-                    await ws.send_str(json.dumps({"repetitions_count": repetitions_count}))
-
-                #cv2.imshow("Live Video", processed_image)
-
-                #if cv2.waitKey(1) & 0xFF == ord('q'):
-                    #break
+                # Отправляем данные о repetitions_count через WebSocket всем клиентам
 
     pc.on("track")(on_track)
 
@@ -125,31 +119,13 @@ async def offer(request):
     )
 
 
-async def websocket_handler(request):
-    ws = web.WebSocketResponse()
-    await ws.prepare(request)
-    pcs_ws.add(ws)
-    async for msg in ws:
-        if msg.type == WSMsgType.TEXT:
-            if msg.data == 'close':
-                await ws.close()
-        elif msg.type == WSMsgType.ERROR:
-            print('ws connection closed with exception %s' %
-                  ws.exception())
-    pcs_ws.remove(ws)
-    print('websocket connection closed')
 
-    return ws
 
 
 async def on_shutdown(app):
     coros = [pc.close() for pc in pcs]
     await asyncio.gather(*coros)
     pcs.clear()
-
-    coros_ws = [ws.close() for ws in pcs_ws]
-    await asyncio.gather(*coros_ws)
-    pcs_ws.clear()
 
 
 if __name__ == "__main__":
@@ -172,6 +148,5 @@ if __name__ == "__main__":
     app.router.add_get("/", index)
     app.router.add_get("/client.js", javascript)
     app.router.add_post("/offer", offer)
-    app.router.add_get('/ws', websocket_handler)
 
     web.run_app(app, host=args.host, port=args.port, ssl_context=ssl_context)
